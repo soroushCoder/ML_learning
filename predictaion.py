@@ -57,16 +57,24 @@ class MyRNNCell(tf.keras.layers.Layer):
     def step(self, x_t):
         # x_t: (batch, input_dim, 1)
         # h_t = tanh(W_hh @ h_{t-1} + W_xh @ x_t)
-        h_prev = self.h
-        whh_h = tf.matmul(self.W_hh, h_prev, transpose_b=False)      # (rnn, batch,1) if we swapped axes
-        wxh_x = tf.matmul(self.W_xh, x_t)
-        # Bring to (batch, rnn, 1)
-        whh_h = tf.transpose(whh_h, [1,0,2])
-        wxh_x = tf.transpose(wxh_x, [1,0,2])
-        self.h = tf.math.tanh(whh_h + wxh_x)
-        # y_t = W_hy @ h_t  -> (batch, output_dim, 1)
-        y_t = tf.matmul(self.W_hy, tf.transpose(self.h, [1,0,2]))
-        y_t = tf.transpose(y_t, [1,0,2])
+        h_prev = self.h  # (batch, rnn, 1)
+
+        # Reshape for proper broadcasting: (batch, rnn, 1) -> (batch, rnn)
+        h_prev_2d = tf.squeeze(h_prev, axis=-1)  # (batch, rnn)
+        x_t_2d = tf.squeeze(x_t, axis=-1)  # (batch, input_dim)
+
+        # Matrix multiplications: W @ x where W is (out, in) and x is (batch, in)
+        whh_h = tf.matmul(h_prev_2d, self.W_hh, transpose_b=True)  # (batch, rnn)
+        wxh_x = tf.matmul(x_t_2d, self.W_xh, transpose_b=True)  # (batch, rnn)
+
+        # Update hidden state
+        h_new = tf.math.tanh(whh_h + wxh_x)  # (batch, rnn)
+        self.h = tf.expand_dims(h_new, axis=-1)  # (batch, rnn, 1)
+
+        # y_t = W_hy @ h_t  -> (batch, output_dim)
+        y_t = tf.matmul(h_new, self.W_hy, transpose_b=True)  # (batch, output_dim)
+        y_t = tf.expand_dims(y_t, axis=-1)  # (batch, output_dim, 1)
+
         return y_t  # (batch, output_dim, 1)
 
 # -----------------------------
