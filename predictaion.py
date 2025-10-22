@@ -28,10 +28,17 @@ for i in range(len(prices_s) - WINDOW):
     X.append(prices_s[i:i+WINDOW])
     y.append(prices_s[i+WINDOW])
 X = np.array(X, dtype=np.float32)             # (N, 12)
+# horizontal (row) vector → into a vertical (column) vector
+# y = [0.2, 0.5, 0.7]   
+# [[0.2],
+#  [0.5],
+#  [0.7]]
 y = np.array(y, dtype=np.float32).reshape(-1, 1)  # (N, 1)
 
 # Last window to predict the NEXT (unseen) month
+# X[:-1], y[:-1] → all pairs except the last one. That’s your training set.
 X_train, y_train = X[:-1], y[:-1]
+# X[-1:] → the last row only, but kept as a 2D array with shape (1, 12) (notice the colon).
 X_last = X[-1:]                                # shape (1, 12)
 
 # -----------------------------
@@ -41,6 +48,7 @@ class MyRNNCell(tf.keras.layers.Layer):
     def __init__(self, rnn_units, input_dim, output_dim):
         super().__init__()
         # Initialize weight matrices
+        # glorot_uniform is just a smart way to pick starting weights so learning starts smoothly
         self.W_xh = self.add_weight(shape=(rnn_units, input_dim),
                                     initializer="glorot_uniform", name="W_xh")
         self.W_hh = self.add_weight(shape=(rnn_units, rnn_units),
