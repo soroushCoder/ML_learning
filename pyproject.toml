@@ -1,11 +1,35 @@
 [project]
 name = "ml-learning"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "Educational machine learning project with implementations of RNN, LSTM, and Perceptron models"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "numpy>=1.24.0",
     "matplotlib>=3.7.0",
     "tensorflow>=2.13.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ml_learning"]

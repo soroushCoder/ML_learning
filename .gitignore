@@ -8,3 +8,46 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Trained models (optional - comment out if you want to track models)
+models/saved/**/*.keras
+models/saved/**/*.h5
+models/saved/**/*.npy
+models/checkpoints/
+
+# Outputs
+outputs/visualizations/*.png
+outputs/visualizations/*.jpg
+outputs/visualizations/*.pdf
+
+# Logs
+logs/
+*.log
+
+# Data (optional - uncomment if you don't want to track data)
+# data/processed/
+# data/raw/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Old deprecated files (from v0.1.0)
+baby_language_model.keras
+baby_language_model_chars.npy
